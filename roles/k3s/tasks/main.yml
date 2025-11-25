@@ -4,6 +4,7 @@
       - puppeteers_keycloak_k3s_namespace is string
       - puppeteers_keycloak_k3s_host is string
       - puppeteers_keycloak_k3s_http_host is string
+      - puppeteers_keycloak_k3s_db_host is string
       - puppeteers_keycloak_k3s_db_username is defined
       - puppeteers_keycloak_k3s_db_password is defined
 
@@ -19,6 +20,7 @@
     host: "{{ puppeteers_keycloak_k3s_host }}"
     ca_cert: "{{ playbook_dir }}/download/{{ inventory_hostname }}/var/lib/rancher/k3s/agent/server-ca.crt"
     http_host: "{{ puppeteers_keycloak_k3s_http_host }}"
+    db_host: "{{ puppeteers_keycloak_k3s_db_host }}"
     db_username: "{{ puppeteers_keycloak_k3s_db_username }}"
     db_password: "{{ puppeteers_keycloak_k3s_db_password }}"
 
@@ -121,6 +123,7 @@
           requests:
             storage: 10Gi
   delegate_to: localhost
+  when: puppeteers_keycloak_k3s_manage_postgres
 
 - name: Create PostgreSQL StatefulSet
   kubernetes.core.k8s:
@@ -165,6 +168,7 @@
                 persistentVolumeClaim:
                   claimName: keycloak-postgresql-pvc
   delegate_to: localhost
+  when: puppeteers_keycloak_k3s_manage_postgres
 
 - name: Create PostgreSQL Service
   kubernetes.core.k8s:
@@ -186,6 +190,7 @@
           - port: 5432
             targetPort: 5432
   delegate_to: localhost
+  when: puppeteers_keycloak_k3s_manage_postgres
 
 - name: Create Keycloak instance
   kubernetes.core.k8s:
@@ -206,7 +211,7 @@
           enabled: false
         db:
           vendor: postgres
-          host: postgres-db
+          host: "{{ db_host }}"
           usernameSecret:
             name: keycloak-secret-db
             key: username
