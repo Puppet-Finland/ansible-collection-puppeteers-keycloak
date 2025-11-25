@@ -1,0 +1,245 @@
+- name: Validate parameters
+  ansible.builtin.assert:
+    that:
+      - puppeteers_keycloak_k3s_namespace is string
+      - puppeteers_keycloak_k3s_host is string
+      - puppeteers_keycloak_k3s_http_host is string
+      - puppeteers_keycloak_k3s_db_username is defined
+      - puppeteers_keycloak_k3s_db_password is defined
+
+- name: Fetch k3s server CA certificate
+  ansible.builtin.fetch:
+    src: /var/lib/rancher/k3s/agent/server-ca.crt
+    dest: download
+    flat: false
+
+- name: Set convenience variables
+  ansible.builtin.set_fact:
+    ns: "{{ puppeteers_keycloak_k3s_namespace }}"
+    host: "{{ puppeteers_keycloak_k3s_host }}"
+    ca_cert: "{{ playbook_dir }}/download/{{ inventory_hostname }}/var/lib/rancher/k3s/agent/server-ca.crt"
+    http_host: "{{ puppeteers_keycloak_k3s_http_host }}"
+    db_username: "{{ puppeteers_keycloak_k3s_db_username }}"
+    db_password: "{{ puppeteers_keycloak_k3s_db_password }}"
+
+- name: Import role
+  ansible.builtin.import_role:
+    name: puppeteers.kubernetes.apply_yaml
+  vars:
+    puppeteers_kubernetes_apply_yaml_src: "."
+    puppeteers_kubernetes_apply_yaml_present:
+      - namespace
+      - serviceaccount
+      - role
+      - rolebinding
+
+- name: Force kubectl to apply resources with the handler
+  ansible.builtin.meta: flush_handlers
+
+- name: Get short lifespan ServiceAccount token for the rest of the plays
+  ansible.builtin.command:
+    cmd: "/usr/local/bin/kubectl create token ansible --duration 15m --namespace {{ ns }}"
+  register: create_token_cmd
+
+- name: Store token as a fact
+  ansible.builtin.set_fact:
+    api_key: "{{ create_token_cmd.stdout }}"
+
+- name: Create Keycloak OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha2
+      kind: OperatorGroup
+      metadata:
+        name: keycloak
+        namespace: "{{ ns }}"
+      spec:
+        targetNamespaces:
+          - "{{ ns }}"
+  delegate_to: localhost
+
+- name: Create Keycloak Subscription
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: keycloak
+        namespace: "{{ ns }}"
+      spec:
+        channel: fast
+        name: keycloak-operator
+        startingCSV: keycloak-operator.v26.4.5
+        source: operatorhubio-catalog
+        sourceNamespace: olm
+        installPlanApproval: Manual
+  delegate_to: localhost
+
+- name: Create Keycloak database credentials
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: v1
+      data:
+        password: "{{ db_password }}"
+        username: "{{ db_username }}"
+      kind: Secret
+      metadata:
+        name: keycloak-secret-db
+        namespace: "{{ ns }}"
+      type: Opaque
+  delegate_to: localhost
+
+- name: Create PersistentVolumeClaim for the PostgreSQL database
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: keycloak-postgresql-pvc
+        namespace: "{{ ns }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 10Gi
+  delegate_to: localhost
+
+- name: Create PostgreSQL StatefulSet
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: postgresql-db
+        namespace: "{{ ns }}"
+      spec:
+        serviceName: postgresql-db-service
+        selector:
+          matchLabels:
+            app: postgresql-db
+        replicas: 1
+        template:
+          metadata:
+            labels:
+              app: postgresql-db
+          spec:
+            containers:
+              - name: postgresql-db
+                image: postgres:15
+                volumeMounts:
+                  - mountPath: /data
+                    name: postgresql-data-volume
+                env:
+                  - name: POSTGRES_USER
+                    value: testuser
+                  - name: POSTGRES_PASSWORD
+                    value: testpassword
+                  - name: PGDATA
+                    value: /data/pgdata
+                  - name: POSTGRES_DB
+                    value: keycloak
+            volumes:
+              - name: postgresql-data-volume
+                persistentVolumeClaim:
+                  claimName: keycloak-postgresql-pvc
+  delegate_to: localhost
+
+- name: Create PostgreSQL Service
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: postgres-db
+        namespace: "{{ ns }}"
+      spec:
+        selector:
+          app: postgresql-db
+        type: LoadBalancer
+        ports:
+          - port: 5432
+            targetPort: 5432
+  delegate_to: localhost
+
+- name: Create Keycloak instance
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: k8s.keycloak.org/v2alpha1
+      kind: Keycloak
+      metadata:
+        name: keycloak
+        namespace: "{{ ns }}"
+      spec:
+        instances: 1
+        ingress:
+          # Use k3s default Traefik IngressRoute (instead of openshift-default)
+          enabled: false
+        db:
+          vendor: postgres
+          host: postgres-db
+          usernameSecret:
+            name: keycloak-secret-db
+            key: username
+          passwordSecret:
+            name: keycloak-secret-db
+            key: password
+        http:
+          # Do not enable HTTPS as it is useless with Traefik
+          httpEnabled: true
+          httpPort: 8080
+        hostname:
+          hostname: "{{ http_host }}"
+        proxy:
+          headers: xforwarded
+  delegate_to: localhost
+
+- name: Create Keycloak IngressRoute
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: traefik.io/v1alpha1
+      kind: IngressRoute
+      metadata:
+        name: keycloak
+        namespace: "{{ ns }}"
+      spec:
+        routes:
+          - match: Host(`{{ http_host }}`)
+            kind: Rule
+            services:
+              - name: keycloak-service
+                port: 8080
+  delegate_to: localhost
