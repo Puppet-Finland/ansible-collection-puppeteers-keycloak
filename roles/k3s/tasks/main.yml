@@ -41,8 +41,8 @@
 - name: Fetch k3s server CA certificate
   ansible.builtin.fetch:
     src: /var/lib/rancher/k3s/agent/server-ca.crt
-    dest: "download"
-    flat: true
+    dest: download
+    flat: false
 
 - name: Create Keycloak OperatorGroup
   kubernetes.core.k8s:
