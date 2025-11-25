@@ -7,10 +7,17 @@
       - puppeteers_keycloak_k3s_db_username is defined
       - puppeteers_keycloak_k3s_db_password is defined
 
+- name: Fetch k3s server CA certificate
+  ansible.builtin.fetch:
+    src: /var/lib/rancher/k3s/agent/server-ca.crt
+    dest: download
+    flat: false
+
 - name: Set convenience variables
   ansible.builtin.set_fact:
     ns: "{{ puppeteers_keycloak_k3s_namespace }}"
     host: "{{ puppeteers_keycloak_k3s_host }}"
+    ca_cert: "{{ playbook_dir }}/download/{{ inventory_hostname }}/var/lib/rancher/k3s/agent/server-ca.crt"
     http_host: "{{ puppeteers_keycloak_k3s_http_host }}"
     db_username: "{{ puppeteers_keycloak_k3s_db_username }}"
     db_password: "{{ puppeteers_keycloak_k3s_db_password }}"
@@ -38,17 +45,11 @@
   ansible.builtin.set_fact:
     api_key: "{{ create_token_cmd.stdout }}"
 
-- name: Fetch k3s server CA certificate
-  ansible.builtin.fetch:
-    src: /var/lib/rancher/k3s/agent/server-ca.crt
-    dest: download
-    flat: false
-
 - name: Create Keycloak OperatorGroup
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: operators.coreos.com/v1alpha2
@@ -65,7 +66,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: operators.coreos.com/v1alpha1
@@ -86,7 +87,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: v1
@@ -104,7 +105,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: v1
@@ -125,7 +126,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: apps/v1
@@ -169,7 +170,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: v1
@@ -190,7 +191,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: k8s.keycloak.org/v2alpha1
@@ -226,7 +227,7 @@
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
-    ca_cert: "{{ playbook_dir }}/../kc_puppeteers_in_k3s_client_ca.crt"
+    ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
     definition:
       apiVersion: traefik.io/v1alpha1
