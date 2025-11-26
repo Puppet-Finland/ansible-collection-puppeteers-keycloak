@@ -31,6 +31,17 @@ with these two variables:
 * **puppeteers_keycloak_k3s_db_host**: set to the hostname of the PostgreSQL server
 * **puppeteers_keycloak_k3s_db_database**: set to the name of the Keycloak database
 
+Note that Operator InstallPlans are approval is set to *Manual*. This means
+that you *need* to approve the initial InstallPlan to get Keycloak running. On
+the Keycloak host do something like this:
+
+```
+$ kubectl get installplans -n keycloak
+$ kubectl patch -n keycloak installplan install-xyz12 -p '{"spec":{"approved":true}}' --type merge
+```
+
+After a while Keycloak should be running.
+
 # License
 
 This project is licensed under the BSD-2-Clause license. See
