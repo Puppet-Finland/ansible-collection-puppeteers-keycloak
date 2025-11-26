@@ -51,6 +51,10 @@
   ansible.builtin.set_fact:
     api_key: "{{ create_token_cmd.stdout }}"
 
+- name: Install Operator Lifecycle Manager
+  ansible.builtin.import_role:
+    name: puppeteers.kubernetes.olm
+
 - name: Create Keycloak OperatorGroup
   kubernetes.core.k8s:
     state: present
