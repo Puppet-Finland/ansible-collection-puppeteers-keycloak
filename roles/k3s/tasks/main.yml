@@ -42,6 +42,10 @@
 - name: Force kubectl to apply resources with the handler
   ansible.builtin.meta: flush_handlers
 
+- name: Install Operator Lifecycle Manager
+  ansible.builtin.import_role:
+    name: puppeteers.kubernetes.olm
+
 - name: Get short lifespan ServiceAccount token for the rest of the plays
   ansible.builtin.command:
     cmd: "/usr/local/bin/kubectl create token ansible --duration 15m --namespace {{ ns }}"
@@ -50,10 +54,6 @@
 - name: Store token as a fact
   ansible.builtin.set_fact:
     api_key: "{{ create_token_cmd.stdout }}"
-
-- name: Install Operator Lifecycle Manager
-  ansible.builtin.import_role:
-    name: puppeteers.kubernetes.olm
 
 - name: Create Keycloak OperatorGroup
   kubernetes.core.k8s:
