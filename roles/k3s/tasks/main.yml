@@ -102,8 +102,8 @@
     definition:
       apiVersion: v1
       data:
-        password: "{{ db_password }}"
-        username: "{{ db_username }}"
+        password: "{{ db_password | ansible.builtin.b64encode }}"
+        username: "{{ db_username | ansible.builtin.b64encode }}"
       kind: Secret
       metadata:
         name: keycloak-secret-db
