@@ -1,3 +1,4 @@
 puppeteers_keycloak_k3s_namespace: keycloak
 puppeteers_keycloak_k3s_manage_postgres: true
 puppeteers_keycloak_k3s_db_host: postgres-db
+puppeteers_keycloak_k3s_db_database: keycloak

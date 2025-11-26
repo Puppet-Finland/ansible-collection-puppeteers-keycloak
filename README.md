@@ -29,6 +29,7 @@ with these two variables:
 
 * **puppeteers_keycloak_k3s_manage_postgres**: set to *false*
 * **puppeteers_keycloak_k3s_db_host**: set to the hostname of the PostgreSQL server
+* **puppeteers_keycloak_k3s_db_database**: set to the name of the Keycloak database
 
 # License
 

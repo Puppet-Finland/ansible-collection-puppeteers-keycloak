@@ -5,6 +5,7 @@
       - puppeteers_keycloak_k3s_host is string
       - puppeteers_keycloak_k3s_http_host is string
       - puppeteers_keycloak_k3s_db_host is string
+      - puppeteers_keycloak_k3s_db_database is string
       - puppeteers_keycloak_k3s_db_username is defined
       - puppeteers_keycloak_k3s_db_password is defined
 
@@ -21,6 +22,7 @@
     ca_cert: "{{ playbook_dir }}/download/{{ inventory_hostname }}/var/lib/rancher/k3s/agent/server-ca.crt"
     http_host: "{{ puppeteers_keycloak_k3s_http_host }}"
     db_host: "{{ puppeteers_keycloak_k3s_db_host }}"
+    db_database: "{{ puppeteers_keycloak_k3s_db_database }}"
     db_username: "{{ puppeteers_keycloak_k3s_db_username }}"
     db_password: "{{ puppeteers_keycloak_k3s_db_password }}"
 
@@ -162,7 +164,7 @@
                   - name: PGDATA
                     value: /data/pgdata
                   - name: POSTGRES_DB
-                    value: keycloak
+                    value: "{{ db_database }}"
             volumes:
               - name: postgresql-data-volume
                 persistentVolumeClaim:
@@ -212,6 +214,7 @@
         db:
           vendor: postgres
           host: "{{ db_host }}"
+          database: "{{ db_database }}"
           usernameSecret:
             name: keycloak-secret-db
             key: username
