@@ -23,6 +23,7 @@ You need to pass the following variables to it:
 * **puppeteers_keycloak_k3s_http_host**: hostname for the IngressRoute. Example: "keycloak.example.org".
 * **puppeteers_keycloak_k3s_db_username**: PostgreSQL username for Keycloak.
 * **puppeteers_keycloak_k3s_db_password**: PostgreSQL password for Keycloak.
+* **puppeteers_keycloak_k3s_starting_version**: Version of Keycloak to install *initially*, for example 26.4.5. This gets passed to the end of the `startingCSV` parameter ("keycloak-operator.v24.6.5"). This has no effect beyond the initial Keycloak install: upgrades are handled by accepting Operator InstallPlans (see below).
 
 If you wish to use an external PostgreSQL database with Keycloak you can do it
 with these two variables:
@@ -31,9 +32,9 @@ with these two variables:
 * **puppeteers_keycloak_k3s_db_host**: set to the hostname of the PostgreSQL server
 * **puppeteers_keycloak_k3s_db_database**: set to the name of the Keycloak database
 
-Note that Operator InstallPlans are approval is set to *Manual*. This means
-that you *need* to approve the initial InstallPlan to get Keycloak running. On
-the Keycloak host do something like this:
+**NOTE**: Operator InstallPlan approval is set to *Manual*. This means that you
+*need* to approve the initial InstallPlan to get Keycloak running. On the
+Keycloak host do something like this:
 
 ```
 $ kubectl get installplans -n keycloak
