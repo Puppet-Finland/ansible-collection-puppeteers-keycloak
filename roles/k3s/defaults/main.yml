@@ -2,3 +2,9 @@ puppeteers_keycloak_k3s_namespace: keycloak
 puppeteers_keycloak_k3s_manage_postgres: true
 puppeteers_keycloak_k3s_db_host: postgres-db
 puppeteers_keycloak_k3s_db_database: keycloak
+
+# Default image used by the Keycloak Operator is defined in here:
+#
+# keycloak/operator/src/main/resources/application.properties
+#
+puppeteers_keycloak_k3s_keycloak_image: quay.io/keycloak/keycloak:nightly

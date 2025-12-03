@@ -9,6 +9,7 @@
       - puppeteers_keycloak_k3s_db_username is defined
       - puppeteers_keycloak_k3s_db_password is defined
       - puppeteers_keycloak_k3s_starting_version is string
+      - puppeteers_keycloak_k3s_keycloak_image is string
 
 - name: Fetch k3s server CA certificate
   ansible.builtin.fetch:
@@ -213,6 +214,7 @@
         name: keycloak
         namespace: "{{ ns }}"
       spec:
+        image: "{{ puppeteers_keycloak_k3s_keycloak_image }}"
         instances: 1
         ingress:
           # Use k3s default Traefik IngressRoute (instead of openshift-default)
