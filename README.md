@@ -32,6 +32,15 @@ with these two variables:
 * **puppeteers_keycloak_k3s_db_host**: set to the hostname of the PostgreSQL server
 * **puppeteers_keycloak_k3s_db_database**: set to the name of the Keycloak database
 
+To use a custom Keycloak image:
+
+* **puppeteers_keycloak_k3s_keycloak_image**: set to the something along the lines of `repo.example.com/keycloak:26.4.6; the default value is the same as in `keycloak/operator/src/main/resources/application.properties`, i.e. `quay.io/keycloak/keycloak:nightly`.
+
+Make sure to follow the instructions in
+[Customizing Keycloak](https://www.keycloak.org/operator/customizing-keycloak) and
+[Running Keycloak in a container](https://www.keycloak.org/server/containers)
+articles when building your custom image.
+
 **NOTE**: Operator InstallPlan approval is set to *Manual*. This means that you
 *need* to approve the initial InstallPlan to get Keycloak running. On the
 Keycloak host do something like this:
