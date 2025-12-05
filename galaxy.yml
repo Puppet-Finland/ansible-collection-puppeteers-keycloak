@@ -9,7 +9,7 @@ namespace: puppeteers
 name: keycloak
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.6.0
+version: 0.6.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -43,7 +43,7 @@ tags: []
 # range specifiers can be set and are separated by ','
 dependencies:
   kubernetes.core: '>=5.3.0'
-  puppeteers.kubernetes: '>=0.4.1'
+  puppeteers.kubernetes: '>=0.7.0'
 
 # The URL of the originating SCM repository
 repository: https://github.com/Puppet-Finland/ansible-collection-puppeteers-keycloak
