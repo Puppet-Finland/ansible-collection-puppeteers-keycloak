@@ -31,17 +31,9 @@
 
 - name: Import role
   ansible.builtin.import_role:
-    name: puppeteers.kubernetes.apply_yaml
+    name: puppeteers.kubernetes.ns_with_sa
   vars:
-    puppeteers_kubernetes_apply_yaml_src: "."
-    puppeteers_kubernetes_apply_yaml_present:
-      - namespace
-      - serviceaccount
-      - role
-      - rolebinding
-
-- name: Force kubectl to apply resources with the handler
-  ansible.builtin.meta: flush_handlers
+    ns: "{{ ns }}"
 
 - name: Install Operator Lifecycle Manager
   ansible.builtin.import_role:
