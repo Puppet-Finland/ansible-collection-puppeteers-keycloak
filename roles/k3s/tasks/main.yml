@@ -10,6 +10,7 @@
       - puppeteers_keycloak_k3s_db_password is defined
       - puppeteers_keycloak_k3s_starting_version is string
       - puppeteers_keycloak_k3s_keycloak_image is string
+      - puppeteers_keycloak_k3s_tls_secret_name is string
 
 - name: Fetch k3s server CA certificate
   ansible.builtin.fetch:
@@ -28,6 +29,7 @@
     db_username: "{{ puppeteers_keycloak_k3s_db_username }}"
     db_password: "{{ puppeteers_keycloak_k3s_db_password }}"
     starting_version: "{{ puppeteers_keycloak_k3s_starting_version }}"
+    tls_secret_name: "{{ puppeteers_keycloak_k3s_tls_secret_name }}"
 
 - name: Import role
   ansible.builtin.import_role:
@@ -237,17 +239,5 @@
     api_key: "{{ api_key }}"
     ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
-    definition:
-      apiVersion: traefik.io/v1alpha1
-      kind: IngressRoute
-      metadata:
-        name: keycloak
-        namespace: "{{ ns }}"
-      spec:
-        routes:
-          - match: Host(`{{ http_host }}`)
-            kind: Rule
-            services:
-              - name: keycloak-service
-                port: 8080
+    template: ingressroute.yaml.j2
   delegate_to: localhost

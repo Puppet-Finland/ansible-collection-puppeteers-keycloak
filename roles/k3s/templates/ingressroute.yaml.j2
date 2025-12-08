@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak
+  namespace: "{{ ns }}"
+spec:
+  routes:
+    - match: Host(`{{ http_host }}`)
+      kind: Rule
+      services:
+        - name: keycloak-service
+          port: 8080
+{% if tls_secret_name != "" %}
+  tls:
+    secretName: {{ tls_secret_name }}
+{% endif %}

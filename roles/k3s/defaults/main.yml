@@ -3,6 +3,9 @@ puppeteers_keycloak_k3s_manage_postgres: true
 puppeteers_keycloak_k3s_db_host: postgres-db
 puppeteers_keycloak_k3s_db_database: keycloak
 
+# Define this when using Letsencrypt for example
+puppeteers_keycloak_k3s_tls_secret_name: ""
+
 # Default image used by the Keycloak Operator is defined in here:
 #
 # keycloak/operator/src/main/resources/application.properties
