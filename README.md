@@ -24,6 +24,7 @@ You need to pass the following variables to it:
 * **puppeteers_keycloak_k3s_db_username**: PostgreSQL username for Keycloak.
 * **puppeteers_keycloak_k3s_db_password**: PostgreSQL password for Keycloak.
 * **puppeteers_keycloak_k3s_starting_version**: Version of Keycloak to install *initially*, for example 26.4.5. This gets passed to the end of the `startingCSV` parameter ("keycloak-operator.v24.6.5"). This has no effect beyond the initial Keycloak install: upgrades are handled by accepting Operator InstallPlans (see below).
+* **puppeteers_keycloak_k3s_tls_secret_name**: get TLS certificate and key from this secret, for example when using [cert-manager](https://cert-manager.io) for example. If this is left undefined default Traefik certificates will be used instead.
 
 If you wish to use an external PostgreSQL database with Keycloak you can do it
 with these two variables:
