@@ -5,11 +5,13 @@ metadata:
   namespace: "{{ ns }}"
 spec:
   routes:
+{% for http_host in http_hosts %}
     - match: Host(`{{ http_host }}`)
       kind: Rule
       services:
         - name: keycloak-service
           port: 8080
+{% endfor %}
 {% if tls_secret_name != "" %}
   tls:
     secretName: {{ tls_secret_name }}
