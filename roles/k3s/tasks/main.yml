@@ -3,7 +3,7 @@
     that:
       - puppeteers_keycloak_k3s_namespace is string
       - puppeteers_keycloak_k3s_host is string
-      - puppeteers_keycloak_k3s_http_host is string
+      - puppeteers_keycloak_k3s_http_hosts is not string and puppeteers_keycloak_k3s_http_hosts is not mapping and puppeteers_keycloak_k3s_http_hosts is iterable
       - puppeteers_keycloak_k3s_db_host is string
       - puppeteers_keycloak_k3s_db_database is string
       - puppeteers_keycloak_k3s_db_username is defined
@@ -23,7 +23,7 @@
     ns: "{{ puppeteers_keycloak_k3s_namespace }}"
     host: "{{ puppeteers_keycloak_k3s_host }}"
     ca_cert: "{{ playbook_dir }}/download/{{ inventory_hostname }}/var/lib/rancher/k3s/agent/server-ca.crt"
-    http_host: "{{ puppeteers_keycloak_k3s_http_host }}"
+    http_hosts: "{{ puppeteers_keycloak_k3s_http_hosts }}"
     db_host: "{{ puppeteers_keycloak_k3s_db_host }}"
     db_database: "{{ puppeteers_keycloak_k3s_db_database }}"
     db_username: "{{ puppeteers_keycloak_k3s_db_username }}"
@@ -228,7 +228,11 @@
           httpEnabled: true
           httpPort: 8080
         hostname:
-          hostname: "{{ http_host }}"
+          # The "strict: false" means that Keycloak will use HTTP headers to
+          # determine the hostname. Without this Keycloak only can only respond
+          # to a single hostname, i.e. the one defined by
+          # spec.hostname.hostname.
+          strict: false
         proxy:
           headers: xforwarded
   delegate_to: localhost

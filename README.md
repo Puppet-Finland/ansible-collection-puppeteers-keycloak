@@ -20,7 +20,7 @@ You need to pass the following variables to it:
 
 * **puppeteers_keycloak_k3s_namespace**: namespace to use for the Keycloak Kubernetes resources
 * **puppeteers_keycloak_k3s_host**: Kubernetes API server URL. Example: "https://keycloak.example.org:6443".
-* **puppeteers_keycloak_k3s_http_host**: hostname for the IngressRoute. Example: "keycloak.example.org".
+* **puppeteers_keycloak_k3s_http_hosts**: a list DNS names Keycloak should be accessible as: used for the IngressRoute.
 * **puppeteers_keycloak_k3s_db_username**: PostgreSQL username for Keycloak.
 * **puppeteers_keycloak_k3s_db_password**: PostgreSQL password for Keycloak.
 * **puppeteers_keycloak_k3s_starting_version**: Version of Keycloak to install *initially*, for example 26.4.5. This gets passed to the end of the `startingCSV` parameter ("keycloak-operator.v24.6.5"). This has no effect beyond the initial Keycloak install: upgrades are handled by accepting Operator InstallPlans (see below).
