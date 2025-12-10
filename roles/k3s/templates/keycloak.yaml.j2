@@ -1,0 +1,51 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: "{{ ns }}"
+spec:
+  image: "{{ puppeteers_keycloak_k3s_keycloak_image }}"
+  instances: 1
+  ingress:
+    # Use k3s default Traefik IngressRoute (instead of openshift-default)
+    enabled: false
+  db:
+    vendor: postgres
+    host: "{{ db_host }}"
+    database: "{{ db_database }}"
+    usernameSecret:
+      name: keycloak-secret-db
+      key: username
+    passwordSecret:
+      name: keycloak-secret-db
+      key: password
+  http:
+    # Do not enable HTTPS as it is useless with Traefik
+    httpEnabled: true
+    httpPort: 8080
+  hostname:
+    # The "strict: false" means that Keycloak will use HTTP headers to
+    # determine the hostname. Without this Keycloak only can only respond
+    # to a single hostname, i.e. the one defined by
+    # spec.hostname.hostname.
+    strict: false
+  proxy:
+    headers: xforwarded
+{% if puppeteers_keycloak_k3s_manage_volumes %}
+  unsupported:
+      podTemplate:
+        spec:
+          containers:
+          - volumeMounts:
+            - mountPath: /opt/keycloak/providers
+              name: providers
+            - mountPath: /opt/keycloak/themes
+              name: themes
+          volumes:
+          - name: providers
+            persistentVolumeClaim:
+              claimName: keycloak-providers-pvc
+          - name: themes
+            persistentVolumeClaim:
+              claimName: keycloak-themes-pvc
+{% endif %}

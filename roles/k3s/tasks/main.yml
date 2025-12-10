@@ -11,6 +11,8 @@
       - puppeteers_keycloak_k3s_starting_version is string
       - puppeteers_keycloak_k3s_keycloak_image is string
       - puppeteers_keycloak_k3s_tls_secret_name is string
+      - puppeteers_keycloak_k3s_manage_postgres is boolean
+      - puppeteers_keycloak_k3s_manage_volumes is boolean
 
 - name: Fetch k3s server CA certificate
   ansible.builtin.fetch:
@@ -111,46 +113,18 @@
     file: postgresql.yml
   when: puppeteers_keycloak_k3s_manage_postgres
 
+- name: Set up volumes
+  ansible.builtin.import_tasks:
+    file: volumes.yml
+  when: puppeteers_keycloak_k3s_manage_volumes
+
 - name: Create Keycloak instance
   kubernetes.core.k8s:
     state: present
     api_key: "{{ api_key }}"
     ca_cert: "{{ ca_cert }}"
     host: "{{ host }}"
-    definition:
-      apiVersion: k8s.keycloak.org/v2alpha1
-      kind: Keycloak
-      metadata:
-        name: keycloak
-        namespace: "{{ ns }}"
-      spec:
-        image: "{{ puppeteers_keycloak_k3s_keycloak_image }}"
-        instances: 1
-        ingress:
-          # Use k3s default Traefik IngressRoute (instead of openshift-default)
-          enabled: false
-        db:
-          vendor: postgres
-          host: "{{ db_host }}"
-          database: "{{ db_database }}"
-          usernameSecret:
-            name: keycloak-secret-db
-            key: username
-          passwordSecret:
-            name: keycloak-secret-db
-            key: password
-        http:
-          # Do not enable HTTPS as it is useless with Traefik
-          httpEnabled: true
-          httpPort: 8080
-        hostname:
-          # The "strict: false" means that Keycloak will use HTTP headers to
-          # determine the hostname. Without this Keycloak only can only respond
-          # to a single hostname, i.e. the one defined by
-          # spec.hostname.hostname.
-          strict: false
-        proxy:
-          headers: xforwarded
+    template: keycloak.yaml.j2
   delegate_to: localhost
 
 - name: Create Keycloak IngressRoute

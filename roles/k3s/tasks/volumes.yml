@@ -1,0 +1,41 @@
+- name: Create PersistentVolumeClaim for Keycloak themes
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: keycloak-themes-pvc
+        namespace: "{{ ns }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi
+  delegate_to: localhost
+
+- name: Create PersistentVolumeClaim for Keycloak providers
+  kubernetes.core.k8s:
+    state: present
+    api_key: "{{ api_key }}"
+    ca_cert: "{{ ca_cert }}"
+    host: "{{ host }}"
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: keycloak-providers-pvc
+        namespace: "{{ ns }}"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi
+  delegate_to: localhost
