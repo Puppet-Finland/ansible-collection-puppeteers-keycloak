@@ -3,6 +3,7 @@ puppeteers_keycloak_k3s_manage_postgres: true
 puppeteers_keycloak_k3s_manage_volumes: false
 puppeteers_keycloak_k3s_db_host: postgres-db
 puppeteers_keycloak_k3s_db_database: keycloak
+puppeteers_keycloak_k3s_admin_allow_ip: 10.0.0.0/8
 
 # Define this when using Letsencrypt for example
 puppeteers_keycloak_k3s_tls_secret_name: ""
