@@ -148,3 +148,11 @@
     host: "{{ host }}"
     template: ingressroute.yaml.j2
   delegate_to: localhost
+
+- name: Customize externalTrafficPolicy to allow IP whitelisting to work
+  ansible.builtin.template:
+    src: traefik-config.yaml.j2
+    dest: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+    owner: root
+    group: root
+    mode: '0600'
