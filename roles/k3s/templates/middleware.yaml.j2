@@ -1,0 +1,11 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: admin-ipallowlist
+  namespace: {{ ns }}
+spec:
+  ipAllowList:
+    sourceRange:
+{% for admin_allow_ip in admin_allow_ips %}
+      - {{ admin_allow_ip }}
+{% endfor %}

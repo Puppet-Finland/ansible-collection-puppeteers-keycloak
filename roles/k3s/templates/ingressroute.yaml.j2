@@ -6,7 +6,14 @@ metadata:
 spec:
   routes:
 {% for http_host in http_hosts %}
-    - match: Host(`{{ http_host }}`) && (! PathPrefix(`/admin`) {% raw %}||{% endraw %} ClientIP(`{{ admin_allow_ip }}`))
+    - match: Host(`{{ http_host }}`) && PathPrefix(`/admin`)
+      kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
+      services:
+        - name: keycloak-service
+          port: 8080
+    - match: Host(`{{ http_host }}`)
       kind: Rule
       services:
         - name: keycloak-service
