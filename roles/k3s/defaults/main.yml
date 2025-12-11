@@ -4,7 +4,7 @@ puppeteers_keycloak_k3s_manage_volumes: false
 puppeteers_keycloak_k3s_db_host: postgres-db
 puppeteers_keycloak_k3s_db_database: keycloak
 puppeteers_keycloak_k3s_admin_allow_ips:
-  - 10.0.0.0/8
+  - 0.0.0.0/0
 puppeteers_keycloak_k3s_admin_http_hosts: []
 
 # Define this when using Letsencrypt for example
