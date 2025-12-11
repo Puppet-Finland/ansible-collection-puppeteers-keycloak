@@ -3,6 +3,7 @@
     that:
       - puppeteers_keycloak_k3s_namespace is string
       - puppeteers_keycloak_k3s_host is string
+      - puppeteers_keycloak_k3s_admin_http_hosts is not string and puppeteers_keycloak_k3s_admin_http_hosts is not mapping and puppeteers_keycloak_k3s_admin_http_hosts is iterable
       - puppeteers_keycloak_k3s_http_hosts is not string and puppeteers_keycloak_k3s_http_hosts is not mapping and puppeteers_keycloak_k3s_http_hosts is iterable
       - puppeteers_keycloak_k3s_admin_allow_ips is not string and puppeteers_keycloak_k3s_admin_allow_ips is not mapping and puppeteers_keycloak_k3s_admin_allow_ips is iterable
       - puppeteers_keycloak_k3s_db_host is string
@@ -26,6 +27,7 @@
     ns: "{{ puppeteers_keycloak_k3s_namespace }}"
     host: "{{ puppeteers_keycloak_k3s_host }}"
     ca_cert: "{{ playbook_dir }}/download/{{ inventory_hostname }}/var/lib/rancher/k3s/agent/server-ca.crt"
+    admin_http_hosts: "{{ puppeteers_keycloak_k3s_admin_http_hosts }}"
     http_hosts: "{{ puppeteers_keycloak_k3s_http_hosts }}"
     admin_allow_ips: "{{ puppeteers_keycloak_k3s_admin_allow_ips }}"
     db_host: "{{ puppeteers_keycloak_k3s_db_host }}"

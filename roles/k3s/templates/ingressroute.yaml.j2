@@ -19,6 +19,13 @@ spec:
         - name: keycloak-service
           port: 8080
 {% endfor %}
+{% for admin_http_host in admin_http_hosts %}
+    - match: Host(`{{ admin_http_host }}`)
+      kind: Rule
+      services:
+        - name: keycloak-service
+          port: 8080
+{% endfor %}
 {% if tls_secret_name != "" %}
   tls:
     secretName: {{ tls_secret_name }}
