@@ -15,3 +15,6 @@ puppeteers_keycloak_k3s_tls_secret_name: ""
 # keycloak/operator/src/main/resources/application.properties
 #
 puppeteers_keycloak_k3s_keycloak_image: quay.io/keycloak/keycloak:nightly
+
+# Disable theme caching (useful for theme development)
+puppeteers_keycloak_k3s_disable_theme_caching: false

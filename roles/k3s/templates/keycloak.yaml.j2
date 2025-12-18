@@ -31,6 +31,15 @@ spec:
     strict: false
   proxy:
     headers: xforwarded
+{% if puppeteers_keycloak_k3s_disable_theme_caching %}
+  additionalOptions:
+  - name: spi-theme--static-max-age
+    value: "-1"
+  - name: spi-theme--cache-themes
+    value: "false"
+  - name: spi-theme--cache-templates
+    value: "false"
+{% endif %}
 {% if puppeteers_keycloak_k3s_manage_volumes %}
   unsupported:
       podTemplate:

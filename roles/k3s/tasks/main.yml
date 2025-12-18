@@ -13,6 +13,7 @@
       - puppeteers_keycloak_k3s_starting_version is string
       - puppeteers_keycloak_k3s_keycloak_image is string
       - puppeteers_keycloak_k3s_tls_secret_name is string
+      - puppeteers_keycloak_k3s_disable_theme_caching is boolean
       - puppeteers_keycloak_k3s_manage_postgres is boolean
       - puppeteers_keycloak_k3s_manage_volumes is boolean
 
