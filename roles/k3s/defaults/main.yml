@@ -5,7 +5,6 @@ puppeteers_keycloak_k3s_db_host: postgres-db
 puppeteers_keycloak_k3s_db_database: keycloak
 puppeteers_keycloak_k3s_admin_allow_ips:
   - 0.0.0.0/0
-puppeteers_keycloak_k3s_admin_http_hosts: []
 
 # Define this when using Letsencrypt for example
 puppeteers_keycloak_k3s_tls_secret_name: ""

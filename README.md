@@ -29,7 +29,6 @@ You need to pass the following variables to it:
 Ingress route configurations are:
 
 * **puppeteers_keycloak_k3s_admin_allow_ips**: IP or IP ranges (IPv4 or IPv6) from which to allow connections to the /admin. Defaults to any IPv4 address (0.0.0.0/0).
-* **puppeteers_keycloak_k3s_admin_http_hosts**: hostnames which don't have restrictions on access to /admin. This would typically be an internal DNS name in IP range defined above. Defaults to and empty list.
 
 If you wish to use an external PostgreSQL database with Keycloak you can do it
 with these two variables:
