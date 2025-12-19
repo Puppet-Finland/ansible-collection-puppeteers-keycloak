@@ -6,7 +6,7 @@ metadata:
 spec:
   routes:
 {% for http_host in http_hosts %}
-    - match: Host(`{{ http_host }}`) && PathPrefix(`/admin`)
+    - match: Host(`{{ http_host }}`) && PathRegexp(`/(admin|metrics|health)`)
       kind: Rule
       middlewares:
         - name: admin-ipallowlist
