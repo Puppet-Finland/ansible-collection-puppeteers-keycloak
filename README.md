@@ -46,6 +46,10 @@ Make sure to follow the instructions in
 [Running Keycloak in a container](https://www.keycloak.org/server/containers)
 articles when building your custom image.
 
+Prometheus metrics are exposed at `https://<keycloak-ip>/health` by the
+IngressRoute. Admin allowlist (see above) limits where metrics can be queried
+from.
+
 **NOTE**: Operator InstallPlan approval is set to *Manual*. This means that you
 *need* to approve the initial InstallPlan to get Keycloak running. On the
 Keycloak host do something like this:
