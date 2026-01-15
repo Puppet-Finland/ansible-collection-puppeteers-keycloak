@@ -6,13 +6,20 @@ metadata:
 spec:
   routes:
 {% for http_host in http_hosts %}
-    - match: Host(`{{ http_host }}`) && PathRegexp(`/(admin|metrics|health)`)
+    - match: Host(`{{ http_host }}`) && PathRegexp(`/admin`)
       kind: Rule
       middlewares:
         - name: admin-ipallowlist
       services:
         - name: keycloak-service
           port: 8080
+    - match: Host(`{{ http_host }}`) && PathRegexp(`/(metrics|health)`)
+      kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
+      services:
+        - name: keycloak-service
+          port: 9000
     - match: Host(`{{ http_host }}`)
       kind: Rule
       services:
