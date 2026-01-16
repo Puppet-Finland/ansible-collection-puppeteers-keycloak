@@ -39,9 +39,15 @@ spec:
     value: "false"
   - name: spi-theme--cache-templates
     value: "false"
+{% endif %}
   - name: metrics-enabled
     value: "true"
-{% endif %}
+  - name: http-metrics-slos
+    value: "250"
+  - name: http-metrics-histograms-enabled
+    value: "true"
+  - name: cache-metrics-histograms-enabled
+    value: "true"
 {% if puppeteers_keycloak_k3s_manage_volumes %}
   unsupported:
       podTemplate:
