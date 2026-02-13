@@ -31,8 +31,8 @@ spec:
     strict: false
   proxy:
     headers: xforwarded
-{% if puppeteers_keycloak_k3s_disable_theme_caching %}
   additionalOptions:
+{% if puppeteers_keycloak_k3s_disable_theme_caching %}
   - name: spi-theme--static-max-age
     value: "-1"
   - name: spi-theme--cache-themes

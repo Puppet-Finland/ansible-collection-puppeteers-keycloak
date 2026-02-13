@@ -121,6 +121,11 @@
     file: volumes.yml
   when: puppeteers_keycloak_k3s_manage_volumes
 
+- name: Create Keycloak instance template
+  ansible.builtin.template:
+    src: keycloak.yaml.j2
+    dest: /tmp/keycloak.yaml
+
 - name: Create Keycloak instance
   kubernetes.core.k8s:
     state: present
