@@ -5,6 +5,7 @@
       - puppeteers_keycloak_k3s_host is string
       - puppeteers_keycloak_k3s_http_hosts is not string and puppeteers_keycloak_k3s_http_hosts is not mapping and puppeteers_keycloak_k3s_http_hosts is iterable
       - puppeteers_keycloak_k3s_admin_allow_ips is not string and puppeteers_keycloak_k3s_admin_allow_ips is not mapping and puppeteers_keycloak_k3s_admin_allow_ips is iterable
+      - puppeteers_keycloak_k3s_enabled_features is not string and puppeteers_keycloak_k3s_enabled_features is not mapping and puppeteers_keycloak_k3s_enabled_features is iterable
       - puppeteers_keycloak_k3s_db_host is string
       - puppeteers_keycloak_k3s_db_database is string
       - puppeteers_keycloak_k3s_db_username is defined

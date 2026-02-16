@@ -29,6 +29,11 @@ spec:
     # to a single hostname, i.e. the one defined by
     # spec.hostname.hostname.
     strict: false
+  features:
+    enabled:
+{% for enabled_feature in puppeteers_keycloak_k3s_enabled_features %}
+      - {{ enabled_feature }}
+{% endfor %}
   proxy:
     headers: xforwarded
   additionalOptions:

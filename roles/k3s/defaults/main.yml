@@ -17,3 +17,7 @@ puppeteers_keycloak_k3s_keycloak_image: quay.io/keycloak/keycloak:nightly
 
 # Disable theme caching (useful for theme development)
 puppeteers_keycloak_k3s_disable_theme_caching: false
+
+# Enable features
+puppeteers_keycloak_k3s_enabled_features:
+  - scripts
